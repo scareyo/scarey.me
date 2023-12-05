@@ -1,0 +1,4 @@
+scarey.me {
+    root * /srv
+    file_server
+}
