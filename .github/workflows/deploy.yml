@@ -18,6 +18,8 @@ jobs:
     - name: Push the Docker image
       run: docker push registry.digitalocean.com/scarey/web:main
     - name: Notify Watchtower
+      shell: bash
       env:
         WATCHTOWER_HTTP_TOKEN: ${{ secrets.WATCHTOWER_HTTP_TOKEN }}
-      run: "curl -H 'Authorization: Bearer ${WATCHTOWER_HTTP_TOKEN}' scarey.me:8080/v1/update"
+        WATCHTOWER_URL: ${{ secrets.WATCHTOWER_URL }}
+      run: "curl -H \"Authorization: Bearer ${WATCHTOWER_HTTP_TOKEN}\" ${WATCHTOWER_URL}"
