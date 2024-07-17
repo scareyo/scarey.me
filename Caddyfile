@@ -1,4 +1,4 @@
-scarey.me {
+{$SITE} {
     root * /srv
     file_server
 }
