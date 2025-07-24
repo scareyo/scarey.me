@@ -1,0 +1,40 @@
+name: ❄️ Update
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 3'
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  update:
+    name: Update
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v19
+
+      - name: Update flake inputs
+        uses: DeterminateSystems/update-flake-lock@v27
+        id: update
+        with:
+          branch: "ci/update-flake-inputs"
+          commit-msg: "chore: update flake inputs"
+          pr-title: "chore: update flake inputs"
+          pr-body: |
+            Automated changes by the [update-flake-lock](https://github.com/DeterminateSystems/update-flake-lock) GitHub Action.
+
+            ```
+            {{ env.GIT_COMMIT_MESSAGE }}
+            ```
+          pr-labels: |
+            dependencies
+            automated
+
+      - name: Merge PR
+        run: "gh pr merge --squash --delete-branch ${{ steps.update.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
